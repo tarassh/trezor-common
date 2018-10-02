@@ -21,7 +21,8 @@ message EosGetPublicKey {
  * @end
  */
  message EosPublicKey {
-    optional string public_key = 1;     // EOS pub key in Base58 encoding
+    optional string wif_public_key = 1;     // EOS pub key in Base58 encoding
+    optional bytes raw_public_key = 2;      // Raw uncompressed public key
 }
 
 /**
@@ -86,6 +87,31 @@ message EosTxActionAck {
     message EosPermissionLevel {
         optional uint64 actor = 1;
         optional uint64 permission = 2;
+    }
+
+    message EosAuthorizationKey {
+        optional bytes key = 1;
+        optional uint32 weight = 2;
+    }
+
+    message EosAuthorizationAccount {
+        optional EosPermissionLevel account = 1;
+        optional uint32 weight = 2;
+    }
+
+    message EosAuthorizationWait {
+        optional uint32 wait_sec = 1;
+        optional uint32 weight = 2;
+    }
+
+    /**
+    * Structure representing authorization settings
+    */
+    message EosAuthorization {
+        optional uint32 threshold = 1;
+        repeated EosAuthorizationKey keys = 2;
+        repeated EosAuthorizationAccount accounts = 3;
+        repeated EosAuthorizationWait waits = 4;
     }
 
     /**
@@ -161,6 +187,16 @@ message EosTxActionAck {
         optional uint64 voter = 1;       // Voter account
         optional uint64 proxy = 2;       // Proxy voter account
         repeated uint64 producers = 3;   // List of producers
+    }
+
+    /** 
+    * Structure representing update authorization.
+    */
+    message EosActionUpdateAuth {
+        optional uint64 account = 1;
+        optional uint64 permission = 2;
+        optional uint64 parent = 3;
+        optional EosAuthorization auth = 4;
     }
 }
 
